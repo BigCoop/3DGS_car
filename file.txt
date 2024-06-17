@@ -50,5 +50,3 @@ colmap stereo_fusion --workspace_path dense --output_path dense/fused.ply | tee 
 colmap model_converter --input_path sparse/0 --output_path . --output_type TXT | tee -a console_output.txt
 
 
-
-192 images failed ot find a pair with sparse reconstruction 
