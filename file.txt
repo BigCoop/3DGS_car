@@ -1,0 +1,54 @@
+aws s3 sync s3://your-bucket-here local_directory
+
+# Update and install necessary packages
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -aG docker $USER
+
+# Install NVIDIA Docker
+sudo yum-config-manager --add-repo https://nvidia.github.io/nvidia-docker/centos7/nvidia-docker.repo
+sudo yum clean all
+sudo yum install -y nvidia-docker2
+sudo systemctl restart docker
+
+# Verify Docker service
+sudo systemctl status docker
+
+# Log out and log back in, or run newgrp docker
+
+# Pull and run the COLMAP Docker container with GPU support
+sudo docker pull colmap/colmap:latest
+sudo docker run --gpus all -it --rm --name colmap-container -v /home/ec2-user/workspace2:/workspace colmap/colmap:latest bash
+
+# Inside the Docker container, verify COLMAP installation
+colmap --help
+
+# Verify the mounted directory inside the Docker container
+ls /workspace
+
+# move to workspace
+cd workspace
+
+# Feature extraction
+colmap feature_extractor --database_path database.db --image_path images | tee -a console_output.txt
+
+# Feature matching
+colmap exhaustive_matcher --database_path database.db | tee -a console_output.txt
+
+# Sparse reconstruction
+mkdir sparse
+colmap mapper --database_path database.db --image_path images --output_path sparse | tee -a console_output.txt
+
+# (Optional) Dense reconstruction
+mkdir dense
+colmap image_undistorter --image_path images --input_path sparse/0 --output_path dense --output_type COLMAP | tee -a console_output.txt 
+colmap patch_match_stereo --workspace_path dense | tee -a console_output.txt 
+colmap stereo_fusion --workspace_path dense --output_path dense/fused.ply | tee -a console_output.txt 
+
+# Export camera parameters
+colmap model_converter --input_path sparse/0 --output_path . --output_type TXT | tee -a console_output.txt
+
+
+
+192 images failed ot find a pair with sparse reconstruction 
