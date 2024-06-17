@@ -1,0 +1,39 @@
+# Ignore all PNG files
+*.png
+
+# Ignore COLMAP output folders
+colmap_output/
+
+# Ignore common temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*.swo
+
+# Ignore specific COLMAP-generated files
+#database.db
+#*.bin
+#*.txt
+#*.ply
+#*.jpg
+
+# Ignore cache files and directories
+.cache/
+__pycache__/
+*.py[cod]
+
+# Ignore operating system files
+.DS_Store
+Thumbs.db
+
+# Ignore any virtual environment directories
+venv/
+env/
+
+# Ignore any user-specific config or editor files
+*.iml
+.idea/
+.vscode/
+
